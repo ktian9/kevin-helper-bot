@@ -1,6 +1,17 @@
 import discord
 from discord.ext import commands
 import api_query
+from datetime import datetime
+from PIL import Image
+import os, os.path
+
+imgs = []
+path = "./weather_icons"
+valid_images = [".jpg",".gif",".png",".tga"]
+
+    
+
+   
 class AccuDropdown(discord.ui.Select):
     def __init__(self, location_list, height):
 
@@ -39,7 +50,7 @@ class AccuDropdown(discord.ui.Select):
         current_conditions = await api_query.query_accuweather_current_conditions(selected_location['key'])
         print(current_conditions)
         is_possible = "Not Possible"
-        if(float(current_conditions['cloud_cover']) < cloud_ceiling_height):
+        if(float(current_conditions['cloud_cover']) < float(cloud_ceiling_height)):
             is_possible = "Possible"
            
 
@@ -80,13 +91,16 @@ class AccuDropdown(discord.ui.Select):
         embed.add_field(name="Visibility Obstruction",
                         value=current_conditions['obstructions_to_visibility'],
                         inline=True)
-
-        embed.set_thumbnail(url=current_conditions['weather_icon'])
+        # img = (Image.open(os.path.join(path,str(current_conditions['weather_icon']) +str(".png")))))
+        file_name = 'weather_icons/' + str(current_conditions['weather_icon']) + ".png"
+        file = discord.File(file_name)  
+        embed.set_thumbnail(url=f"attachment://{file.filename}")
+        # embed.set_thumbnail(url=current_conditions['weather_icon'])
 
         # await ctx.send(embed=embed)
         
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, file = file)
         
         ## need to insert into database
         # _ = selected_location[0]['state'] + " " + selected_location[0]['country']

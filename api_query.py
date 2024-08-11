@@ -1,5 +1,12 @@
 import requests
+import json
+from datetime import datetime
 
+f = open("tokens.json")
+file = json.load(f)
+TOKEN = file['discord']
+accu_TOKEN = file['accuweather']
+f.close()
 
 async def query_accuweather_location_details(location):
     try:
@@ -145,7 +152,7 @@ async def query_accuweather_current_conditions(location_key):
             "obstructions_to_visibility": response['ObstructionsToVisibility'],
             "cloud_cover": response["Ceiling"]["Imperial"]["Value"],
             "windchill": response["WindChillTemperature"]["Imperial"]["Value"],
-            "precipitation_summary": response["Precipitation"]["Imperial"]["Value"],
+            "precipitation_summary": response['PrecipitationSummary']["Precipitation"]["Imperial"]["Value"],
             "link": response['Link']
         }
         
