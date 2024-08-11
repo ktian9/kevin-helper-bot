@@ -1,7 +1,13 @@
 import discord
-
+from discord.ext import commands
+import api_query
 class AccuDropdown(discord.ui.Select):
-    def __init__(self, location_list):
+    def __init__(self, location_list, height):
+
+        global cloud_ceiling_height
+        global location_as_list
+        location_as_list = location_list
+        cloud_ceiling_height = height
 
         # Set the options that will be presented inside the dropdown
         options = []
@@ -22,21 +28,75 @@ class AccuDropdown(discord.ui.Select):
         # Select object, and the values attribute gets a list of the user's
         # selected options. We only want the first one.
         
-        await interaction.response.send_message(f'Selected location is {self.values[0]}')
         global selected_value
         selected_value = self.values[0]
+        selected_location = {}
+        for i in location_as_list:
+            if i['key'] == selected_value:
+                selected_location = i
+        
+
+        current_conditions = await api_query.query_accuweather_current_conditions(selected_location['key'])
+        print(current_conditions)
+        is_possible = "Not Possible"
+        if(float(current_conditions['cloud_cover']) < cloud_ceiling_height):
+            is_possible = "Possible"
+           
+
+        embed = discord.Embed(title="Weather Details",
+                      colour=0x00b0f4,
+                      timestamp=datetime.now())
+
+        embed.set_author(name="Weather Information",
+                        url=current_conditions['link'])
+
+        embed.add_field(name="Weather Description",
+                        value=current_conditions['weather_description'],
+                        inline=False)
+        embed.add_field(name="Is Raining",
+                        value=current_conditions['is_raining'],
+                        inline=True)
+        embed.add_field(name="Rain Type",
+                        value=current_conditions['rain_type'],
+                        inline=True)
+        embed.add_field(name="Humidity",
+                        value=current_conditions['humidity'],
+                        inline=True)
+        embed.add_field(name="Temperature",
+                        value=current_conditions['temperature'],
+                        inline=True)
+        embed.add_field(name="Feeling",
+                        value=current_conditions['feeling'],
+                        inline=True)
+        embed.add_field(name="Windchill",
+                        value=current_conditions['windchill'],
+                        inline=True)
+        embed.add_field(name="Cloud Clover",
+                        value=current_conditions['cloud_cover'],
+                        inline=True)
+        embed.add_field(name="Cloud Inversion",
+                        value=is_possible,
+                        inline=True)
+        embed.add_field(name="Visibility Obstruction",
+                        value=current_conditions['obstructions_to_visibility'],
+                        inline=True)
+
+        embed.set_thumbnail(url=current_conditions['weather_icon'])
+
+        # await ctx.send(embed=embed)
+        
+
+        await interaction.response.send_message(embed=embed)
         
         ## need to insert into database
-        return self.values[0]
+        # _ = selected_location[0]['state'] + " " + selected_location[0]['country']
+        # await interaction.response.send_message(f'Selected location is {_}')
     
-    async def get_current_value(self):
-        return selected_value
-
 
 class AccuDropdownView(discord.ui.View):
-    def __init__(self, location_list):
+    def __init__(self, location_list, height):
         super().__init__()
 
         # Adds the dropdown to our view object.
-        self.add_item(AccuDropdown(location_list))
+        self.add_item(AccuDropdown(location_list, height))
         
