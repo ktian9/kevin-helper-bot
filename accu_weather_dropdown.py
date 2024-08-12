@@ -5,7 +5,9 @@ from datetime import datetime
 from PIL import Image
 import os, os.path
 import psycopg2
-import database
+import sys
+sys.path.insert(0, "./database")
+import database_accuweather
 imgs = []
 path = "./weather_icons"
 valid_images = [".jpg",".gif",".png",".tga"]
@@ -116,16 +118,18 @@ class AccuDropdown(discord.ui.Select):
             "feeling": current_conditions['feeling'],
             "windchill": current_conditions['windchill'],
             "cloud_cover": current_conditions['cloud_cover'],
-            "cloud_inversion": current_conditions['cloud_inversion'],
-            "visibility_obstruction": current_conditions['visibility_obstruction'],
-            "accu_key": current_conditions['accu_key'],
-            "tracked_state": current_conditions['tracked_state'],
-            "tracked_country": current_conditions['tracked_country'],
-            "tracked_name": current_conditions['tracked_name'],
-            "user_submitted": current_conditions['user_submitted'],
-            "date_updated": current_conditions['date_updated'],
-            "date_registered": current_conditions['date_registered'],            
+            "cloud_inversion": is_possible,
+            "visibility_obstruction": current_conditions['obstructions_to_visibility'],
+            "accu_key": selected_location['key'],
+            "tracked_state": selected_location['state'],
+            "tracked_country": selected_location['country'],
+            "tracked_name": selected_location['location'],
+            "user_submitted": current_conditions['user_submitted'], ## from interactoin
+            "date_updated": datetime.today().strftime('%Y-%m-%d'), ## current date
+            "date_registered": datetime.today().strftime('%Y-%m-%d'),   ## current date          
         }
+        
+        print(database_accuweather.insert_into_weathertable(database_dict))
         # weather_description = query_params['weather_description']
         # is_raining = query_params['is_raining']
         # rain_type = query_params['rain_type']

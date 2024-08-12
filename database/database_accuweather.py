@@ -18,6 +18,7 @@ def insert_into_weathertable(query_params):
         cursor.execute(
                 "prepare insert_weather_table as "
                 "INSERT INTO daily_weather_logs VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)")
-        cursor.execute("execute insert_weather_table (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tuple(query_params))
+        cursor.execute("execute insert_weather_table (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tuple(query_params.values()))
+        return "sucessfully added to database"
     except Exception as e:
         return "Something went wrong with insertion into weather table! {e}"
