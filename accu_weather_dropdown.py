@@ -4,7 +4,8 @@ import api_query
 from datetime import datetime
 from PIL import Image
 import os, os.path
-
+import psycopg2
+import database
 imgs = []
 path = "./weather_icons"
 valid_images = [".jpg",".gif",".png",".tga"]
@@ -105,7 +106,43 @@ class AccuDropdown(discord.ui.Select):
         ## need to insert into database
         # _ = selected_location[0]['state'] + " " + selected_location[0]['country']
         # await interaction.response.send_message(f'Selected location is {_}')
-    
+        
+        database_dict = {
+            "weather_description": current_conditions['weather_description'],
+            "is_raining": current_conditions['is_raining'],
+            "rain_type": current_conditions['rain_type'],
+            "humidity": current_conditions['humidity'],
+            "temperature": current_conditions['temperature'],
+            "feeling": current_conditions['feeling'],
+            "windchill": current_conditions['windchill'],
+            "cloud_cover": current_conditions['cloud_cover'],
+            "cloud_inversion": current_conditions['cloud_inversion'],
+            "visibility_obstruction": current_conditions['visibility_obstruction'],
+            "accu_key": current_conditions['accu_key'],
+            "tracked_state": current_conditions['tracked_state'],
+            "tracked_country": current_conditions['tracked_country'],
+            "tracked_name": current_conditions['tracked_name'],
+            "user_submitted": current_conditions['user_submitted'],
+            "date_updated": current_conditions['date_updated'],
+            "date_registered": current_conditions['date_registered'],            
+        }
+        # weather_description = query_params['weather_description']
+        # is_raining = query_params['is_raining']
+        # rain_type = query_params['rain_type']
+        # humidity = query_params['humidity']
+        # temperature = query_params['temperature']
+        # feeling = query_params['feeling']
+        # windchill = query_params['windchill']
+        # cloud_cover = query_params['cloud_cover']
+        # cloud_inversion = query_params['cloud_inversion']
+        # visibility_obstruction = query_params['visibility_obstruction']
+        # accu_key = query_params['accu_key']
+        # tracked_state = query_params['tracked_state']
+        # tracked_country = query_params['tracked_country']
+        # tracked_name = query_params['tracked_name']
+        # user_submitted = query_params['user_submitted']
+        # date_updated = query_params['date_updated']
+        # date_registered = query_params['date_registered']
 
 class AccuDropdownView(discord.ui.View):
     def __init__(self, location_list, height):
