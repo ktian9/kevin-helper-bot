@@ -124,7 +124,7 @@ class AccuDropdown(discord.ui.Select):
             "tracked_state": selected_location['state'],
             "tracked_country": selected_location['country'],
             "tracked_name": selected_location['location'],
-            "user_submitted": current_conditions['user_submitted'], ## from interactoin
+            "user_submitted": interaction.user.global_name, ## from interactoin
             "date_updated": datetime.today().strftime('%Y-%m-%d'), ## current date
             "date_registered": datetime.today().strftime('%Y-%m-%d'),   ## current date          
         }
