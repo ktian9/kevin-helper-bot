@@ -21,7 +21,7 @@ class AccuDropdown(discord.ui.Select):
         global cloud_ceiling_height
         global location_as_list
         global channel_id
-        channel_id = channel_id
+        channel_id = in_channel_id
         location_as_list = location_list
         cloud_ceiling_height = height
 
@@ -128,7 +128,8 @@ class AccuDropdown(discord.ui.Select):
             "tracked_name": selected_location['location'],
             "user_submitted": interaction.user.global_name, ## from interactoin
             "date_updated": datetime.today().strftime('%Y-%m-%d'), ## current date
-            "date_registered": datetime.today().strftime('%Y-%m-%d'),   ## current date          
+            "date_registered": datetime.today().strftime('%Y-%m-%d'),   ## current date
+            "channel_id": channel_id          
         }
         
         print(database_accuweather.insert_into_weathertable(database_dict))
@@ -151,9 +152,9 @@ class AccuDropdown(discord.ui.Select):
         # date_registered = query_params['date_registered']
 
 class AccuDropdownView(discord.ui.View):
-    def __init__(self, location_list, height, channel_id):
+    def __init__(self, location_list, height, in_channel_id):
         super().__init__()
 
         # Adds the dropdown to our view object.
-        self.add_item(AccuDropdown(location_list, height, channel_id))
+        self.add_item(AccuDropdown(location_list, height, in_channel_id))
         

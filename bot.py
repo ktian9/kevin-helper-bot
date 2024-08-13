@@ -31,9 +31,18 @@ bot = commands.Bot(command_prefix = "!sorairo ", intents=intents)
 
 
 @bot.event
-async def testing_triggered_message():
+async def send_cloud_inversion_details():
     await bot.wait_until_ready()
     c = bot.get_channel(437010005149876229)
+    
+    
+    
+    
+    
+    
+    
+    
+    
     await c.send("testing triggered message")
     
     
@@ -46,7 +55,7 @@ async def on_ready():
 
     
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(testing_triggered_message, CronTrigger(hour=17, minute=26))
+    scheduler.add_job(send_cloud_inversion_details, CronTrigger(hour=17, minute=26))
     scheduler.start()
     print(f'{bot.user} has connected to Discord!')
     
@@ -56,10 +65,14 @@ async def on_ready():
 async def register_cloud_inversion(client, *message):
     try:
         location = " ".join(message[2:])
+        print(f"location: {location}")
         height = message[0]
+        print(f"height: {height}")
         channel_id = message[1]
+        print(f"channel_id: {channel_id}")
+
         items = await api_query.query_accuweather_location_details(location)
-        print(items)
+        #print(items)
         location_list = []
         for i in items:
             loc_dict = {'key': i['Key'], 'location': i['LocalizedName'], 'country': i['Country']['LocalizedName'], 'state': i['AdministrativeArea']['ID']}
@@ -74,7 +87,7 @@ async def register_cloud_inversion(client, *message):
                       url="https://www.accuweather.com/",
                       description="> Please make sure that the location exists on accuweather and utilize the proper name here\n[Accuweather](https://www.accuweather.com/)",
                       colour=0x8080c0,
-                      timestamp=datetime.now())
+                      timestamp=datetime.datetime.now())
         embed.set_author(name="Cloud Inversion Location Selector")
         embed.set_thumbnail(url="https://www.verizon.com/about/sites/default/files/news-media/150310_AccuWeather_640x400.jpg")
 
@@ -96,7 +109,6 @@ async def register_cloud_inversion(client, *message):
         print(e)
 
 
-# time2=datetime.time(hour=16, minute= 46,  tzinfo = tz)
 
 
 
