@@ -16,10 +16,12 @@ valid_images = [".jpg",".gif",".png",".tga"]
 
    
 class AccuDropdown(discord.ui.Select):
-    def __init__(self, location_list, height):
+    def __init__(self, location_list, height, in_channel_id):
 
         global cloud_ceiling_height
         global location_as_list
+        global channel_id
+        channel_id = channel_id
         location_as_list = location_list
         cloud_ceiling_height = height
 
@@ -149,9 +151,9 @@ class AccuDropdown(discord.ui.Select):
         # date_registered = query_params['date_registered']
 
 class AccuDropdownView(discord.ui.View):
-    def __init__(self, location_list, height):
+    def __init__(self, location_list, height, channel_id):
         super().__init__()
 
         # Adds the dropdown to our view object.
-        self.add_item(AccuDropdown(location_list, height))
+        self.add_item(AccuDropdown(location_list, height, channel_id))
         

@@ -1,14 +1,15 @@
 # https://embed.dan.onl/
 import os
-from datetime import datetime
+import datetime
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import requests
 import json
 import accu_weather_dropdown
 import api_query
-
-
+from pytz import timezone
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 ### Loading Tokens
 f = open("tokens.json")
 file = json.load(f)
@@ -22,28 +23,41 @@ f.close()
 intents = discord.Intents.default()
 intents.message_content = True
 # client = discord.Client(intents=intents)
-client = commands.Bot(command_prefix = "!sorairo ", intents=intents)
+bot = commands.Bot(command_prefix = "!sorairo ", intents=intents)
 
 
 
 ### Loading Database
 
 
-
-@client.event
+@bot.event
+async def testing_triggered_message():
+    await bot.wait_until_ready()
+    c = bot.get_channel(437010005149876229)
+    await c.send("testing triggered message")
+    
+    
+    
+    
+@bot.event
 async def on_ready():
     game = discord.Game("Kevin's personal discord helper")
-    await client.change_presence(status = discord.Status.online, activity=game)
-    print(f'{client.user} has connected to Discord!')
+    await bot.change_presence(status = discord.Status.online, activity=game)
+
+    
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(testing_triggered_message, CronTrigger(hour=17, minute=26))
+    scheduler.start()
+    print(f'{bot.user} has connected to Discord!')
     
     
 
-@client.command()
+@bot.command()
 async def register_cloud_inversion(client, *message):
     try:
-        location = " ".join(message[1:])
+        location = " ".join(message[2:])
         height = message[0]
-        
+        channel_id = message[1]
         items = await api_query.query_accuweather_location_details(location)
         print(items)
         location_list = []
@@ -53,7 +67,7 @@ async def register_cloud_inversion(client, *message):
             
             
             
-        view = accu_weather_dropdown.AccuDropdownView(location_list, height)
+        view = accu_weather_dropdown.AccuDropdownView(location_list, height, channel_id)
         
         
         embed = discord.Embed(title="Please select the location below",
@@ -69,9 +83,7 @@ async def register_cloud_inversion(client, *message):
         
         await client.send(embed = embed, view = view)
         
-        
-        
-        
+                
         
         
         
@@ -82,7 +94,10 @@ async def register_cloud_inversion(client, *message):
     except Exception as e:
         print("main bot thread exception")
         print(e)
-        
-      
 
-client.run(TOKEN)
+
+# time2=datetime.time(hour=16, minute= 46,  tzinfo = tz)
+
+
+
+bot.run(TOKEN)
