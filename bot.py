@@ -10,6 +10,7 @@ import api_query
 from pytz import timezone
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+import database_accuweather
 ### Loading Tokens
 f = open("tokens.json")
 file = json.load(f)
@@ -34,6 +35,11 @@ bot = commands.Bot(command_prefix = "!sorairo ", intents=intents)
 async def send_cloud_inversion_details():
     await bot.wait_until_ready()
     c = bot.get_channel(437010005149876229)
+    
+    active_channels = database_accuweather.get_active_channels()
+    
+    for i in active_channels():
+            
     
     
     

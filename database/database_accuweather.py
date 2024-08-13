@@ -53,14 +53,14 @@ def insert_into_weathertable(query_params):
 
     
     
-def get_channel_ids():
+def get_active_channels():
     try:
-        cursor.execute("select DISTINCT channel_id from active_channels")
+        cursor.execute("select * from active_channels")
         
         if (len(list(cursor.fetchall())) == 0):
             return None
         else:
-            return list(cursor.fetchall()[0])
+            return list(cursor.fetchall())
     except Exception as e:
         print(f"Exception {e}")
         
